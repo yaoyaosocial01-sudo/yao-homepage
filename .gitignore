@@ -1,0 +1,13 @@
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.codex/
+.agents/
+.gitdata/
+.git-template/
+
+node_modules/
+.vercel/
+
+*.log
