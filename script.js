@@ -41,9 +41,35 @@ const copy = {
       {
         id: "growth",
         question: "你关注女性成长的什么部分？",
-        answer: "我更关心真实生活里的成长：身份变化、亲密关系、职业选择、育儿压力、自我表达，以及普通女性如何在变化很快的时代里保留判断力和行动力。"
+        answer: "我更关注真实生活里的成长：身份变化、亲密关系、职业选择、育儿压力、自我表达，以及普通女性如何在变化很快的时代里保留判断力和行动力。"
       }
     ],
+    note: {
+      subject: "来自个人主页的留言",
+      emptyMessage: "先写一句你想说的话吧。",
+      success: "已经帮你整理成邮件。如果邮箱客户端没有自动打开，请直接发送到 yaoyaosocial01@gmail.com。",
+      fallback: "如果无法自动打开邮件，请直接发送到 yaoyaosocial01@gmail.com。",
+      placeholders: {
+        name: "比如：小林 / Lily",
+        contact: "邮箱或微信，方便我回复",
+        message: "写下合作想法、想听的话题，或者打个招呼"
+      },
+      reasons: [
+        "想合作",
+        "想听你聊 AI",
+        "想听你聊投资学习",
+        "想听你聊生物医药",
+        "想听你聊澳洲生活",
+        "想听你聊女性成长",
+        "只是打个招呼"
+      ],
+      bodyLabels: {
+        name: "名字 / 昵称",
+        contact: "联系方式",
+        reason: "来这里的原因",
+        message: "留言"
+      }
+    },
     topicTitles: {
       ai: "AI",
       investing: "投资学习",
@@ -106,6 +132,32 @@ const copy = {
         answer: "I care about growth in real life: identity shifts, relationships, career decisions, parenting pressure, self-expression, and how women keep their judgment and agency in a fast-changing world."
       }
     ],
+    note: {
+      subject: "Message from YAO homepage",
+      emptyMessage: "Please write a short message first.",
+      success: "Your note has been prepared as an email. If your email client did not open, please send it directly to yaoyaosocial01@gmail.com.",
+      fallback: "If the email client does not open automatically, please send your note directly to yaoyaosocial01@gmail.com.",
+      placeholders: {
+        name: "For example: Lily",
+        contact: "Email or WeChat, so I can reply",
+        message: "Share an idea, a topic request, or simply say hello"
+      },
+      reasons: [
+        "Collaboration",
+        "AI content",
+        "Investing learning",
+        "Biotech",
+        "Life in Australia",
+        "Women's growth",
+        "Just saying hi"
+      ],
+      bodyLabels: {
+        name: "Name / nickname",
+        contact: "Contact info",
+        reason: "Why are you here",
+        message: "Message"
+      }
+    },
     topicTitles: {
       ai: "AI",
       investing: "Investing",
@@ -130,6 +182,10 @@ const topicNodes = document.querySelectorAll("[data-topic]");
 const topicTitleNodes = document.querySelectorAll("[data-topic-title]");
 const twinAnswer = document.querySelector("[data-twin-answer]");
 const twinPrompts = document.querySelector("[data-twin-prompts]");
+const noteForm = document.querySelector("[data-note-form]");
+const noteReason = document.querySelector("[data-note-reason]");
+const noteFeedback = document.querySelector("[data-note-feedback]");
+const placeholderNodes = document.querySelectorAll("[data-placeholder-key]");
 let activeTwinPrompt = "who";
 
 function renderTwin(lang) {
@@ -151,6 +207,31 @@ function renderTwin(lang) {
     button.setAttribute("aria-pressed", String(prompt.id === activePrompt.id));
     twinPrompts.append(button);
   });
+}
+
+function renderNoteForm(lang) {
+  const noteCopy = copy[lang].note;
+
+  placeholderNodes.forEach((node) => {
+    const key = node.dataset.placeholderKey;
+    node.placeholder = noteCopy.placeholders[key] || "";
+  });
+
+  if (!noteReason) return;
+
+  const currentValue = noteReason.value;
+  noteReason.innerHTML = "";
+
+  noteCopy.reasons.forEach((reason) => {
+    const option = document.createElement("option");
+    option.value = reason;
+    option.textContent = reason;
+    noteReason.append(option);
+  });
+
+  if (noteCopy.reasons.includes(currentValue)) {
+    noteReason.value = currentValue;
+  }
 }
 
 function setLanguage(lang) {
@@ -175,6 +256,7 @@ function setLanguage(lang) {
   });
 
   renderTwin(lang);
+  renderNoteForm(lang);
 }
 
 buttons.forEach((button) => {
@@ -187,6 +269,41 @@ twinPrompts?.addEventListener("click", (event) => {
 
   activeTwinPrompt = button.dataset.promptId;
   renderTwin(document.body.dataset.langActive || "zh");
+});
+
+noteForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const lang = document.body.dataset.langActive || "zh";
+  const noteCopy = copy[lang].note;
+  const formData = new FormData(noteForm);
+  const name = String(formData.get("name") || "").trim();
+  const contact = String(formData.get("contact") || "").trim();
+  const reason = String(formData.get("reason") || "").trim();
+  const message = String(formData.get("message") || "").trim();
+
+  noteFeedback.classList.remove("is-error");
+
+  if (!message) {
+    noteFeedback.textContent = noteCopy.emptyMessage;
+    noteFeedback.classList.add("is-error");
+    return;
+  }
+
+  const body = [
+    `${noteCopy.bodyLabels.name}: ${name || "-"}`,
+    `${noteCopy.bodyLabels.contact}: ${contact || "-"}`,
+    `${noteCopy.bodyLabels.reason}: ${reason || "-"}`,
+    "",
+    `${noteCopy.bodyLabels.message}:`,
+    message,
+    "",
+    noteCopy.fallback
+  ].join("\n");
+
+  const mailto = `mailto:yaoyaosocial01@gmail.com?subject=${encodeURIComponent(noteCopy.subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailto;
+  noteFeedback.textContent = noteCopy.success;
 });
 
 setLanguage(localStorage.getItem("yao-site-language") || "zh");

@@ -542,6 +542,12 @@ h3 {
   cursor: pointer;
 }
 
+.twin-note-link {
+  margin: 1rem 0 0;
+  color: var(--teal-dark);
+  font-weight: 800;
+}
+
 .twin-chat {
   margin-top: 1.35rem;
 }
@@ -603,6 +609,93 @@ h3 {
   color: white;
   border-color: var(--teal);
   background: var(--teal);
+}
+
+.note-section {
+  padding-top: clamp(3.4rem, 7vw, 5rem);
+}
+
+.note-form {
+  border: 1px solid rgba(234, 220, 199, 0.88);
+  border-radius: 8px;
+  padding: clamp(1.2rem, 3vw, 1.85rem);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(238, 248, 239, 0.74)),
+    var(--paper);
+  box-shadow: var(--shadow-card);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.form-field {
+  display: grid;
+  gap: 0.45rem;
+  color: var(--teal-dark);
+  font-weight: 850;
+}
+
+.form-field-wide {
+  grid-column: 1 / -1;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  border: 1px solid rgba(45, 138, 124, 0.2);
+  border-radius: 8px;
+  padding: 0.82rem 0.9rem;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.88);
+  font: inherit;
+  font-weight: 500;
+  outline: none;
+}
+
+.form-field textarea {
+  min-height: 8.6rem;
+  resize: vertical;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(45, 138, 124, 0.12);
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.form-actions .button {
+  border: 0;
+  cursor: pointer;
+}
+
+.privacy-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.form-feedback {
+  min-height: 1.5rem;
+  margin: 0.85rem 0 0;
+  color: var(--teal-dark);
+  font-weight: 800;
+}
+
+.form-feedback.is-error {
+  color: #a74938;
 }
 
 .contact {
@@ -784,6 +877,10 @@ h3 {
     border-top: 1px solid rgba(45, 138, 124, 0.18);
     border-left: 1px solid rgba(45, 138, 124, 0.18);
   }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 560px) {
@@ -876,5 +973,10 @@ h3 {
     width: 100%;
     justify-content: flex-start;
     text-align: left;
+  }
+
+  .form-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 }

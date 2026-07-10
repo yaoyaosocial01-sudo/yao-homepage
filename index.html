@@ -49,6 +49,10 @@
         <span data-i18n="nav.twin.zh">数字分身</span>
         <span data-i18n="nav.twin.en">Twin</span>
       </a>
+      <a href="#note">
+        <span data-i18n="nav.note.zh">留言</span>
+        <span data-i18n="nav.note.en">Note</span>
+      </a>
       <a href="#science">
         <span data-i18n="nav.science.zh">科研</span>
         <span data-i18n="nav.science.en">Science</span>
@@ -333,8 +337,70 @@
             </div>
             <div class="chat-prompts" data-twin-prompts aria-label="Digital twin question prompts"></div>
           </div>
+          <p class="twin-note-link">
+            <span data-i18n="twin.note.zh">如果你想让我以后聊某个话题，也可以给我留一句。</span>
+            <span data-i18n="twin.note.en">If there is something you would like me to explore next, leave me a note.</span>
+          </p>
         </div>
       </div>
+    </section>
+
+    <section class="section note-section" id="note">
+      <div class="section-heading">
+        <p class="eyebrow">
+          <span data-i18n="note.eyebrow.zh">留言互动</span>
+          <span data-i18n="note.eyebrow.en">Leave a Note</span>
+        </p>
+        <h2>
+          <span data-i18n="note.title.zh">留言给瑶瑶</span>
+          <span data-i18n="note.title.en">Leave a note for YAO</span>
+        </h2>
+        <p class="section-intro">
+          <span data-i18n="note.intro.zh">如果你来到这里，不妨留下一句话。可以是合作想法、想听我聊的话题、对 AI/投资/澳洲生活/女性成长的好奇，或者只是打个招呼。</span>
+          <span data-i18n="note.intro.en">If you have made it here, feel free to leave a note. It can be a collaboration idea, a topic you would like me to explore, a question about AI, investing, biotech, Australia life, women's growth, or simply a hello.</span>
+        </p>
+      </div>
+
+      <form class="note-form" data-note-form>
+        <div class="form-grid">
+          <label class="form-field" for="note-name">
+            <span data-i18n="note.name.zh">你的名字 / 昵称</span>
+            <span data-i18n="note.name.en">Your name / nickname</span>
+            <input id="note-name" name="name" type="text" autocomplete="name" data-placeholder-key="name" />
+          </label>
+
+          <label class="form-field" for="note-contact">
+            <span data-i18n="note.contact.zh">联系方式（邮箱或微信）</span>
+            <span data-i18n="note.contact.en">Contact info (email or WeChat)</span>
+            <input id="note-contact" name="contact" type="text" autocomplete="email" data-placeholder-key="contact" />
+          </label>
+
+          <label class="form-field" for="note-reason">
+            <span data-i18n="note.reason.zh">你来这里的原因</span>
+            <span data-i18n="note.reason.en">Why are you here?</span>
+            <select id="note-reason" name="reason" data-note-reason></select>
+          </label>
+
+          <label class="form-field form-field-wide" for="note-message">
+            <span data-i18n="note.message.zh">你想说什么？</span>
+            <span data-i18n="note.message.en">What would you like to say?</span>
+            <textarea id="note-message" name="message" rows="5" data-placeholder-key="message"></textarea>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button class="button primary" type="submit">
+            <span data-i18n="note.submit.zh">整理成邮件发送</span>
+            <span data-i18n="note.submit.en">Send by email</span>
+          </button>
+          <p class="privacy-note">
+            <span data-i18n="note.privacy.zh">请不要在留言中填写敏感个人信息。</span>
+            <span data-i18n="note.privacy.en">Please don't include sensitive personal information in your message.</span>
+          </p>
+        </div>
+
+        <p class="form-feedback" data-note-feedback aria-live="polite"></p>
+      </form>
     </section>
 
     <section class="section contact" id="contact">
