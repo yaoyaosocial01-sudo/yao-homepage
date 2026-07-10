@@ -324,13 +324,15 @@
             <span data-i18n="twin.title.en">Meet my digital twin: Yaoyao</span>
           </h2>
           <p>
-            <span data-i18n="twin.body.zh">现在她还只是一个头像和入口，未来我希望她可以帮助你快速了解我的内容、科研背景、AI 工具体验、投资学习笔记和澳洲生活观察。</span>
-            <span data-i18n="twin.body.en">For now, she is a visual guide to my world. In the next version, I hope she can help visitors explore my content, biotech background, AI tool notes, investing learning journey, and life in Australia.</span>
+            <span data-i18n="twin.body.zh">她现在是一个轻量的互动入口，可以带你快速了解我的内容、播客、科研背景和合作方式。先点一个问题聊聊吧。</span>
+            <span data-i18n="twin.body.en">She is now a lightweight interactive guide who can help you explore my content, podcast, science background, and collaboration options. Pick a question to start.</span>
           </p>
-          <button class="button primary twin-button" type="button" data-twin-button>
-            <span data-i18n="twin.button.zh">和瑶瑶聊聊（即将上线）</span>
-            <span data-i18n="twin.button.en">Chat with Yaoyao (coming soon)</span>
-          </button>
+          <div class="twin-chat" aria-live="polite">
+            <div class="chat-bubble">
+              <p data-twin-answer></p>
+            </div>
+            <div class="chat-prompts" data-twin-prompts aria-label="Digital twin question prompts"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -397,8 +399,6 @@
   <footer class="site-footer">
     <p>© 2026 YAO / 瑶瑶</p>
   </footer>
-
-  <div class="toast" role="status" aria-live="polite" data-toast></div>
 
   <script src="script.js"></script>
 </body>
