@@ -179,8 +179,8 @@ h1 {
 
 .hero-name {
   display: block;
-  font-size: clamp(5.2rem, 12vw, 9.6rem);
-  line-height: 0.82;
+  font-size: clamp(2.6rem, 6vw, 4.8rem);
+  line-height: 0.92;
   font-weight: 900;
 }
 
@@ -285,8 +285,9 @@ h1 {
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  align-items: center;
   gap: clamp(0.6rem, 2vw, 1rem);
-  width: min(100%, 510px);
+  width: min(100%, 560px);
 }
 
 .avatar-frame {
@@ -297,12 +298,12 @@ h1 {
 }
 
 .avatar-frame-yao {
-  width: min(100%, 300px);
+  width: clamp(220px, 18vw, 280px);
 }
 
 .avatar-frame-jin {
-  width: min(100%, 300px);
-  margin-top: clamp(2rem, 7vw, 4.5rem);
+  width: clamp(220px, 18vw, 280px);
+  margin-top: 0;
 }
 
 .avatar-frame::before {
@@ -316,7 +317,7 @@ h1 {
 
 .avatar-frame img {
   position: relative;
-  width: 88%;
+  width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
   border: 10px solid rgba(255, 255, 255, 0.84);
@@ -985,7 +986,7 @@ h3 {
   }
 
   .hero-name {
-    font-size: clamp(3.25rem, 17vw, 5.2rem);
+    font-size: clamp(2.4rem, 12vw, 3.4rem);
   }
 
   .hero-cn {
@@ -1031,12 +1032,17 @@ h3 {
 
   .duo-avatar-frame {
     grid-template-columns: 1fr;
-    width: min(78vw, 260px);
+    width: min(78vw, 280px);
   }
 
   .avatar-frame-jin {
-    margin-top: -1.35rem;
-    margin-left: 2.1rem;
+    margin-top: 0.85rem;
+    margin-left: 0;
+  }
+
+  .avatar-frame-yao,
+  .avatar-frame-jin {
+    width: min(78vw, 280px);
   }
 
   .person-card {
