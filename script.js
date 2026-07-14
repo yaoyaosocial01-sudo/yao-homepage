@@ -2,6 +2,10 @@ const copy = {
   zh: {
     pageTitle: "搞钱姐妹 - 瑶瑶 & 金 / Wealth Build Sis - Yao & Jin",
     twinIntro: "你好，我是瑶瑶的数字分身。现在先做搞钱姐妹的内容导览员，帮你快速了解瑶瑶和金。",
+    guideIntros: {
+      yao: "我是瑶瑶数字分身，先做您的内容导览员。可以从下面的问题开始，我会用比较热情、好懂的方式带您了解搞钱姐妹。",
+      jin: "我是金数字分身，先做您的内容导览员。可以从下面的问题开始，我会用比较冷静、分析型的方式带您了解搞钱姐妹。"
+    },
     twinPrompts: [
       {
         id: "who",
@@ -90,6 +94,10 @@ const copy = {
   en: {
     pageTitle: "Wealth Build Sis - Yao & Jin / 搞钱姐妹 - 瑶瑶 & 金",
     twinIntro: "Hi, I am Yaoyao's digital twin. For now, I guide visitors through Wealth Build Sis and help you get to know Yao and Jin.",
+    guideIntros: {
+      yao: "I am Yao's digital twin, here as your content guide. Pick a question below and I will walk you through Wealth Build Sis in a warm, clear way.",
+      jin: "I am Jin's digital twin, here as your content guide. Pick a question below and I will walk you through Wealth Build Sis with a calm, analytical lens."
+    },
     twinPrompts: [
       {
         id: "who",
@@ -182,20 +190,28 @@ const topicNodes = document.querySelectorAll("[data-topic]");
 const topicTitleNodes = document.querySelectorAll("[data-topic-title]");
 const twinAnswer = document.querySelector("[data-twin-answer]");
 const twinPrompts = document.querySelector("[data-twin-prompts]");
+const guideButtons = document.querySelectorAll("[data-guide]");
 const noteForm = document.querySelector("[data-note-form]");
 const noteReason = document.querySelector("[data-note-reason]");
 const noteFeedback = document.querySelector("[data-note-feedback]");
 const placeholderNodes = document.querySelectorAll("[data-placeholder-key]");
 let activeTwinPrompt = "who";
+let activeGuide = "yao";
 
 function renderTwin(lang) {
   if (!twinAnswer || !twinPrompts) return;
 
   const prompts = copy[lang].twinPrompts;
-  const activePrompt = prompts.find((prompt) => prompt.id === activeTwinPrompt) || prompts[0];
+  const activePrompt = prompts.find((prompt) => prompt.id === activeTwinPrompt);
 
-  twinAnswer.textContent = activePrompt?.answer || copy[lang].twinIntro;
+  twinAnswer.textContent = activePrompt?.answer || copy[lang].guideIntros[activeGuide] || copy[lang].twinIntro;
   twinPrompts.innerHTML = "";
+
+  guideButtons.forEach((button) => {
+    const isActive = button.dataset.guide === activeGuide;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
 
   prompts.forEach((prompt) => {
     const button = document.createElement("button");
@@ -203,8 +219,8 @@ function renderTwin(lang) {
     button.type = "button";
     button.textContent = prompt.question;
     button.dataset.promptId = prompt.id;
-    button.classList.toggle("is-active", prompt.id === activePrompt.id);
-    button.setAttribute("aria-pressed", String(prompt.id === activePrompt.id));
+    button.classList.toggle("is-active", prompt.id === activePrompt?.id);
+    button.setAttribute("aria-pressed", String(prompt.id === activePrompt?.id));
     twinPrompts.append(button);
   });
 }
@@ -261,6 +277,24 @@ function setLanguage(lang) {
 
 buttons.forEach((button) => {
   button.addEventListener("click", () => setLanguage(button.dataset.lang));
+});
+
+guideButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    activeGuide = button.dataset.guide;
+    activeTwinPrompt = "intro";
+    const lang = document.body.dataset.langActive || "zh";
+    twinAnswer.textContent = copy[lang].guideIntros[activeGuide];
+    guideButtons.forEach((item) => {
+      const isActive = item.dataset.guide === activeGuide;
+      item.classList.toggle("is-active", isActive);
+      item.setAttribute("aria-pressed", String(isActive));
+    });
+    twinPrompts.querySelectorAll?.("[data-prompt-id]").forEach((item) => {
+      item.classList.remove("is-active");
+      item.setAttribute("aria-pressed", "false");
+    });
+  });
 });
 
 twinPrompts?.addEventListener("click", (event) => {
