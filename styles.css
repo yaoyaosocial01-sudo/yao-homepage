@@ -301,6 +301,10 @@ h1 {
   width: clamp(220px, 18vw, 280px);
 }
 
+.avatar-frame-duo {
+  width: min(100%, 430px);
+}
+
 .avatar-frame-jin {
   width: clamp(220px, 18vw, 280px);
   margin-top: 0;
@@ -959,6 +963,10 @@ h3 {
     width: min(92vw, 520px);
   }
 
+  .avatar-frame-duo {
+    width: min(86vw, 380px);
+  }
+
   .avatar-frame img {
     border-radius: 22px;
   }
@@ -1105,6 +1113,10 @@ h3 {
   .avatar-frame-yao,
   .avatar-frame-jin {
     width: min(78vw, 280px);
+  }
+
+  .avatar-frame-duo {
+    width: min(78vw, 300px);
   }
 
   .person-card {
