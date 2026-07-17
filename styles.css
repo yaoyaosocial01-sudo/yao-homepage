@@ -998,7 +998,7 @@ h3 {
 .knowledge-guide-copy h2 {
   max-width: 880px;
   margin-bottom: 0.75rem;
-  font-size: clamp(2rem, 5.3vw, 4.2rem);
+  font-size: clamp(1.35rem, 3.55vw, 2.8rem);
   line-height: 1.06;
   letter-spacing: 0;
 }
@@ -1548,7 +1548,7 @@ h3 {
   }
 
   .knowledge-guide-copy h2 {
-    font-size: clamp(1.9rem, 10vw, 2.75rem);
+    font-size: clamp(1.3rem, 6.7vw, 1.85rem);
   }
 
   .knowledge-guide-avatar img {
