@@ -1302,6 +1302,38 @@ h3 {
   font-weight: 800;
 }
 
+.knowledge-note-cta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1.1rem;
+  border: 1px solid rgba(45, 138, 124, 0.14);
+  border-radius: 8px;
+  padding: clamp(1rem, 2.5vw, 1.35rem);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(238, 248, 239, 0.72)),
+    var(--paper);
+  box-shadow: var(--shadow-card);
+}
+
+.knowledge-note-cta h3 {
+  margin-bottom: 0.35rem;
+  font-size: clamp(1.16rem, 2vw, 1.45rem);
+}
+
+.knowledge-note-cta p:last-child {
+  margin-bottom: 0;
+  color: var(--muted);
+}
+
+.knowledge-note-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
 .site-footer {
   padding: 2rem 0 2.5rem;
   color: var(--muted);
@@ -1339,6 +1371,7 @@ h3 {
   .topic-grid,
   .knowledge-guide-hero,
   .knowledge-layout,
+  .knowledge-note-cta,
   .knowledge-card-grid {
     grid-template-columns: 1fr;
   }
@@ -1349,6 +1382,10 @@ h3 {
 
   .knowledge-guide-avatars {
     max-width: 390px;
+  }
+
+  .knowledge-note-actions {
+    justify-content: flex-start;
   }
 
   .knowledge-layout.has-guide:not(.has-detail) .knowledge-primary {
