@@ -195,6 +195,7 @@ const noteForm = document.querySelector("[data-note-form]");
 const noteReason = document.querySelector("[data-note-reason]");
 const noteFeedback = document.querySelector("[data-note-feedback]");
 const placeholderNodes = document.querySelectorAll("[data-placeholder-key]");
+const knowledgeLayout = document.querySelector(".knowledge-layout");
 const knowledgePrimary = document.querySelector("[data-knowledge-primary]");
 const knowledgeDetail = document.querySelector("[data-knowledge-detail]");
 const knowledgeGuideName = document.querySelector("[data-knowledge-guide-name]");
@@ -203,20 +204,21 @@ const knowledgeGuideBubble = document.querySelector("[data-knowledge-guide-bubbl
 const knowledgeGuideAvatars = document.querySelectorAll("[data-guide-jump]");
 let activeTwinPrompt = "who";
 let activeGuide = "yao";
-let activeKnowledgeId = "ai_age";
+let activeKnowledgeGuide = null;
+let activeKnowledgeId = null;
 
 const knowledgeGuides = {
   yao: {
     name: "瑶瑶",
     avatar: "assets/yao-avatar.png",
     entryIds: ["money", "life", "company"],
-    intro: "这个话题我来带你看。我的导览方式会更像把复杂问题讲成普通人能用的判断框架：先看我们怎么看，再看具体内容卡。"
+    prompt: "嗨，我是瑶瑶，你想先了解哪个方向？"
   },
   jin: {
     name: "金",
     avatar: "assets/jin-avatar.png",
     entryIds: ["ai_age", "tools"],
-    intro: "这个话题我来带你看。我会更偏冷静分析：先看趋势和工具到底改变了什么，再看普通人可以怎么开始行动。"
+    prompt: "嗨，我是金，你想先了解哪个方向？"
   }
 };
 
@@ -224,15 +226,21 @@ function getKnowledgeGuide(entryId) {
   return knowledgeGuides.jin.entryIds.includes(entryId) ? knowledgeGuides.jin : knowledgeGuides.yao;
 }
 
-function updateKnowledgeGuide(entry) {
-  const guide = getKnowledgeGuide(entry?.id);
+function updateKnowledgeGuide(guideKey) {
+  const guide = knowledgeGuides[guideKey];
 
-  knowledgeGuideName && (knowledgeGuideName.textContent = guide.name);
-  knowledgeGuideText && (knowledgeGuideText.textContent = `${guide.intro} 当前入口：${entry?.titleZh || "知识树"}。`);
-  knowledgeGuideBubble?.setAttribute("data-active-guide", guide.name === "金" ? "jin" : "yao");
+  if (!guide) {
+    knowledgeGuideName && (knowledgeGuideName.textContent = "从这里开始");
+    knowledgeGuideText && (knowledgeGuideText.textContent = "点一个数字分身，我们会给你几个方向。你选中话题后，再打开具体知识卡。");
+    knowledgeGuideBubble?.removeAttribute("data-active-guide");
+  } else {
+    knowledgeGuideName && (knowledgeGuideName.textContent = guide.name);
+    knowledgeGuideText && (knowledgeGuideText.textContent = guide.prompt);
+    knowledgeGuideBubble?.setAttribute("data-active-guide", guideKey);
+  }
 
   knowledgeGuideAvatars.forEach((button) => {
-    const isActive = button.dataset.guideJump === (guide.name === "金" ? "jin" : "yao");
+    const isActive = button.dataset.guideJump === guideKey;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-pressed", String(isActive));
   });
@@ -281,17 +289,24 @@ function renderKnowledgeTree(data) {
     return;
   }
 
-  if (!entries.some((entry) => entry.id === activeKnowledgeId)) {
-    activeKnowledgeId = entries[0].id;
+  updateKnowledgeGuide(activeKnowledgeGuide);
+  knowledgeLayout?.classList.toggle("has-guide", Boolean(activeKnowledgeGuide));
+  knowledgeLayout?.classList.toggle("has-detail", Boolean(activeKnowledgeId));
+
+  if (!activeKnowledgeGuide) {
+    knowledgePrimary.innerHTML = "";
+    knowledgeDetail.innerHTML = "";
+    return;
   }
 
-  knowledgePrimary.innerHTML = entries.map((entry, index) => {
-    const guide = getKnowledgeGuide(entry.id);
+  const guide = knowledgeGuides[activeKnowledgeGuide];
+  const guideEntries = entries.filter((entry) => guide.entryIds.includes(entry.id));
+
+  knowledgePrimary.innerHTML = guideEntries.map((entry) => {
     return `
-    <button class="knowledge-entry-button ${entry.id === activeKnowledgeId ? "is-active" : ""}" type="button" data-knowledge-id="${escapeHTML(entry.id)}" aria-pressed="${entry.id === activeKnowledgeId}">
+    <button class="knowledge-entry-button knowledge-topic-button ${entry.id === activeKnowledgeId ? "is-active" : ""}" type="button" data-knowledge-id="${escapeHTML(entry.id)}" aria-pressed="${entry.id === activeKnowledgeId}">
       <span class="knowledge-entry-meta">
-        <span class="knowledge-entry-index">${String(index + 1).padStart(2, "0")}</span>
-        <span class="knowledge-guide-badge">${escapeHTML(guide.name)}导览</span>
+        <span class="knowledge-guide-badge">${escapeHTML(guide.name)}带看</span>
       </span>
       <strong>${escapeHTML(entry.titleZh)}</strong>
       <span>${escapeHTML(entry.heroOpinionZh)}</span>
@@ -299,15 +314,25 @@ function renderKnowledgeTree(data) {
   `;
   }).join("");
 
-  const activeEntry = entries.find((entry) => entry.id === activeKnowledgeId) || entries[0];
+  if (!activeKnowledgeId) {
+    knowledgeDetail.innerHTML = "";
+    return;
+  }
+
+  const activeEntry = guideEntries.find((entry) => entry.id === activeKnowledgeId);
+  if (!activeEntry) {
+    activeKnowledgeId = null;
+    renderKnowledgeTree(data);
+    return;
+  }
+
   const sections = Array.isArray(activeEntry.sections) ? activeEntry.sections : [];
-  const activeGuideInfo = getKnowledgeGuide(activeEntry.id);
-  updateKnowledgeGuide(activeEntry);
 
   knowledgeDetail.innerHTML = `
     <article class="knowledge-focus">
       <div class="knowledge-focus-head">
-        <p class="eyebrow">${escapeHTML(activeGuideInfo.name)}导览</p>
+        <button class="knowledge-back-button" type="button" data-knowledge-reset>← 换一个导览员 / 返回知识树入口</button>
+        <p class="eyebrow">${escapeHTML(guide.name)}带看</p>
         <h3>${escapeHTML(activeEntry.titleZh)}</h3>
         <p>${escapeHTML(activeEntry.heroOpinionZh)}</p>
       </div>
@@ -375,15 +400,29 @@ knowledgePrimary?.addEventListener("click", (event) => {
   if (!button) return;
 
   activeKnowledgeId = button.dataset.knowledgeId;
-  initKnowledgeTree();
+  initKnowledgeTree().then(() => {
+    knowledgeDetail?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 });
 
 knowledgeGuideAvatars.forEach((button) => {
   button.addEventListener("click", () => {
-    const guide = knowledgeGuides[button.dataset.guideJump];
-    activeKnowledgeId = guide?.entryIds?.[0] || activeKnowledgeId;
-    initKnowledgeTree();
+    activeKnowledgeGuide = button.dataset.guideJump;
+    activeKnowledgeId = null;
+    initKnowledgeTree().then(() => {
+      knowledgePrimary?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
   });
+});
+
+knowledgeDetail?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-knowledge-reset]");
+  if (!button) return;
+
+  activeKnowledgeGuide = null;
+  activeKnowledgeId = null;
+  initKnowledgeTree();
+  document.querySelector("#knowledge")?.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
 function renderTwin(lang) {
