@@ -49,10 +49,6 @@
         <span data-i18n="nav.podcast.zh">播客</span>
         <span data-i18n="nav.podcast.en">Podcast</span>
       </a>
-      <a href="#digital-twin">
-        <span data-i18n="nav.twin.zh">数字分身</span>
-        <span data-i18n="nav.twin.en">Twin</span>
-      </a>
       <a href="#note">
         <span data-i18n="nav.note.zh">留言</span>
         <span data-i18n="nav.note.en">Note</span>
@@ -233,19 +229,35 @@
     </section>
 
     <section class="section knowledge-tree" id="knowledge">
-      <div class="section-heading">
-        <p class="eyebrow">
-          <span data-i18n="knowledge.eyebrow.zh">知识树</span>
-          <span data-i18n="knowledge.eyebrow.en">Knowledge Tree</span>
-        </p>
-        <h2>
-          <span data-i18n="knowledge.title.zh">你带着什么问题来？</span>
-          <span data-i18n="knowledge.title.en">Start with the question you came with</span>
-        </h2>
-        <p class="section-intro">
-          <span data-i18n="knowledge.intro.zh">我们把视频和播客里反复讨论的问题，整理成可以直接阅读的知识卡。先看一级观点，感兴趣再展开具体卡片。</span>
-          <span data-i18n="knowledge.intro.en">We turned recurring video and podcast themes into readable knowledge cards. Start with the main view, then expand the cards that interest you.</span>
-        </p>
+      <div class="knowledge-guide-hero">
+        <div class="knowledge-guide-avatars" aria-label="Yao and Jin knowledge guides">
+          <button class="knowledge-guide-avatar is-active" type="button" data-guide-jump="yao" aria-label="Yao guide">
+            <img src="assets/yao-avatar.png" alt="Yao digital guide avatar" />
+            <span>瑶瑶</span>
+          </button>
+          <button class="knowledge-guide-avatar" type="button" data-guide-jump="jin" aria-label="Jin guide">
+            <img src="assets/jin-avatar.png" alt="Jin digital guide avatar" />
+            <span>金</span>
+          </button>
+        </div>
+        <div class="knowledge-guide-copy">
+          <p class="eyebrow">
+            <span data-i18n="knowledge.eyebrow.zh">数字分身 · 知识树</span>
+            <span data-i18n="knowledge.eyebrow.en">Digital Guides · Knowledge Tree</span>
+          </p>
+          <h2>
+            <span data-i18n="knowledge.title.zh">让瑶瑶和金带你看看，我们都探索了什么</span>
+            <span data-i18n="knowledge.title.en">Let Yao and Jin guide you through what we explore</span>
+          </h2>
+          <p class="section-intro">
+            <span data-i18n="knowledge.intro.zh">我们把视频和播客里反复讨论的问题，整理成可以直接阅读的知识卡。01 和 03 由金导览，另外三个入口由瑶瑶导览。先看一级观点，感兴趣再展开具体卡片。</span>
+            <span data-i18n="knowledge.intro.en">We turned recurring video and podcast themes into readable knowledge cards. Jin guides topics 01 and 03, while Yao guides the other three. Start with the main view, then expand the cards that interest you.</span>
+          </p>
+          <div class="knowledge-guide-bubble" data-knowledge-guide-bubble>
+            <strong data-knowledge-guide-name>瑶瑶</strong>
+            <p data-knowledge-guide-text>先选一个你关心的问题，我会带你从核心观点看到具体知识卡。</p>
+          </div>
+        </div>
       </div>
       <div class="knowledge-layout" aria-live="polite">
         <div class="knowledge-primary" data-knowledge-primary></div>
@@ -373,45 +385,6 @@
             <span data-i18n="science.startupBody.en">With an IT and technology background, Jin has engineering experience in Korea and BD, project, and marketing experience at Samsung Beijing and Intel. She now works in a Marketing Manager-related role in Australia and keeps a long-term interest in AI tools, tech trends, and commercialization paths.</span>
           </p>
         </article>
-      </div>
-    </section>
-
-    <section class="section digital-twin" id="digital-twin">
-      <div class="twin-inner">
-        <div class="twin-avatar-options" aria-label="Choose a digital twin guide">
-          <button class="twin-avatar-option is-active" type="button" data-guide="yao" aria-pressed="true">
-            <img src="assets/yao-avatar.png" alt="Yaoyao digital twin avatar" />
-            <span>瑶瑶</span>
-          </button>
-          <button class="twin-avatar-option" type="button" data-guide="jin" aria-pressed="false">
-            <img src="assets/jin-avatar.png" alt="Jin digital twin avatar" />
-            <span>金</span>
-          </button>
-        </div>
-        <div class="twin-copy">
-          <p class="eyebrow">
-            <span data-i18n="twin.eyebrow.zh">数字分身</span>
-            <span data-i18n="twin.eyebrow.en">Digital Twin</span>
-          </p>
-          <h2>
-            <span data-i18n="twin.title.zh">欢迎来到搞钱姐妹的主页，点击“瑶瑶”或者“金”的数字分身做您的内容导览员。</span>
-            <span data-i18n="twin.title.en">Welcome to Wealth Build Sis. Click Yao or Jin to choose your digital twin content guide.</span>
-          </h2>
-          <p>
-            <span data-i18n="twin.body.zh">选择一位导览员后，可以继续点下面的问题，快速了解我们的内容、背景和合作方式。</span>
-            <span data-i18n="twin.body.en">After choosing a guide, pick a question below to explore our content, backgrounds, and collaboration options.</span>
-          </p>
-          <div class="twin-chat" aria-live="polite">
-            <div class="chat-bubble">
-              <p data-twin-answer></p>
-            </div>
-            <div class="chat-prompts" data-twin-prompts aria-label="Digital twin question prompts"></div>
-          </div>
-          <p class="twin-note-link">
-            <span data-i18n="twin.note.zh">如果你想让搞钱姐妹以后聊某个话题，也可以给我们留一句。</span>
-            <span data-i18n="twin.note.en">If there is something you would like Wealth Build Sis to explore next, leave us a note.</span>
-          </p>
-        </div>
       </div>
     </section>
 

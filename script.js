@@ -197,9 +197,46 @@ const noteFeedback = document.querySelector("[data-note-feedback]");
 const placeholderNodes = document.querySelectorAll("[data-placeholder-key]");
 const knowledgePrimary = document.querySelector("[data-knowledge-primary]");
 const knowledgeDetail = document.querySelector("[data-knowledge-detail]");
+const knowledgeGuideName = document.querySelector("[data-knowledge-guide-name]");
+const knowledgeGuideText = document.querySelector("[data-knowledge-guide-text]");
+const knowledgeGuideBubble = document.querySelector("[data-knowledge-guide-bubble]");
+const knowledgeGuideAvatars = document.querySelectorAll("[data-guide-jump]");
 let activeTwinPrompt = "who";
 let activeGuide = "yao";
 let activeKnowledgeId = "ai_age";
+
+const knowledgeGuides = {
+  yao: {
+    name: "瑶瑶",
+    avatar: "assets/yao-avatar.png",
+    entryIds: ["money", "life", "company"],
+    intro: "这个话题我来带你看。我的导览方式会更像把复杂问题讲成普通人能用的判断框架：先看我们怎么看，再看具体内容卡。"
+  },
+  jin: {
+    name: "金",
+    avatar: "assets/jin-avatar.png",
+    entryIds: ["ai_age", "tools"],
+    intro: "这个话题我来带你看。我会更偏冷静分析：先看趋势和工具到底改变了什么，再看普通人可以怎么开始行动。"
+  }
+};
+
+function getKnowledgeGuide(entryId) {
+  return knowledgeGuides.jin.entryIds.includes(entryId) ? knowledgeGuides.jin : knowledgeGuides.yao;
+}
+
+function updateKnowledgeGuide(entry) {
+  const guide = getKnowledgeGuide(entry?.id);
+
+  knowledgeGuideName && (knowledgeGuideName.textContent = guide.name);
+  knowledgeGuideText && (knowledgeGuideText.textContent = `${guide.intro} 当前入口：${entry?.titleZh || "知识树"}。`);
+  knowledgeGuideBubble?.setAttribute("data-active-guide", guide.name === "金" ? "jin" : "yao");
+
+  knowledgeGuideAvatars.forEach((button) => {
+    const isActive = button.dataset.guideJump === (guide.name === "金" ? "jin" : "yao");
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+}
 
 function escapeHTML(value = "") {
   return String(value).replace(/[&<>"']/g, (character) => ({
@@ -248,21 +285,29 @@ function renderKnowledgeTree(data) {
     activeKnowledgeId = entries[0].id;
   }
 
-  knowledgePrimary.innerHTML = entries.map((entry, index) => `
+  knowledgePrimary.innerHTML = entries.map((entry, index) => {
+    const guide = getKnowledgeGuide(entry.id);
+    return `
     <button class="knowledge-entry-button ${entry.id === activeKnowledgeId ? "is-active" : ""}" type="button" data-knowledge-id="${escapeHTML(entry.id)}" aria-pressed="${entry.id === activeKnowledgeId}">
-      <span class="knowledge-entry-index">${String(index + 1).padStart(2, "0")}</span>
+      <span class="knowledge-entry-meta">
+        <span class="knowledge-entry-index">${String(index + 1).padStart(2, "0")}</span>
+        <span class="knowledge-guide-badge">${escapeHTML(guide.name)}导览</span>
+      </span>
       <strong>${escapeHTML(entry.titleZh)}</strong>
       <span>${escapeHTML(entry.heroOpinionZh)}</span>
     </button>
-  `).join("");
+  `;
+  }).join("");
 
   const activeEntry = entries.find((entry) => entry.id === activeKnowledgeId) || entries[0];
   const sections = Array.isArray(activeEntry.sections) ? activeEntry.sections : [];
+  const activeGuideInfo = getKnowledgeGuide(activeEntry.id);
+  updateKnowledgeGuide(activeEntry);
 
   knowledgeDetail.innerHTML = `
     <article class="knowledge-focus">
       <div class="knowledge-focus-head">
-        <p class="eyebrow">当前入口</p>
+        <p class="eyebrow">${escapeHTML(activeGuideInfo.name)}导览</p>
         <h3>${escapeHTML(activeEntry.titleZh)}</h3>
         <p>${escapeHTML(activeEntry.heroOpinionZh)}</p>
       </div>
@@ -331,6 +376,14 @@ knowledgePrimary?.addEventListener("click", (event) => {
 
   activeKnowledgeId = button.dataset.knowledgeId;
   initKnowledgeTree();
+});
+
+knowledgeGuideAvatars.forEach((button) => {
+  button.addEventListener("click", () => {
+    const guide = knowledgeGuides[button.dataset.guideJump];
+    activeKnowledgeId = guide?.entryIds?.[0] || activeKnowledgeId;
+    initKnowledgeTree();
+  });
 });
 
 function renderTwin(lang) {
