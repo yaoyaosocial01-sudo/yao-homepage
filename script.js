@@ -195,8 +195,143 @@ const noteForm = document.querySelector("[data-note-form]");
 const noteReason = document.querySelector("[data-note-reason]");
 const noteFeedback = document.querySelector("[data-note-feedback]");
 const placeholderNodes = document.querySelectorAll("[data-placeholder-key]");
+const knowledgePrimary = document.querySelector("[data-knowledge-primary]");
+const knowledgeDetail = document.querySelector("[data-knowledge-detail]");
 let activeTwinPrompt = "who";
 let activeGuide = "yao";
+let activeKnowledgeId = "ai_age";
+
+function escapeHTML(value = "") {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#039;"
+  })[character]);
+}
+
+function paragraphList(items = []) {
+  return items
+    .filter(Boolean)
+    .map((item) => `<p>${escapeHTML(item)}</p>`)
+    .join("");
+}
+
+function normalizeKnowledgeEntries(data) {
+  const primaryEntries = Array.isArray(data?.primaryEntrances) ? data.primaryEntrances : [];
+  const company = data?.featuredCompanySection;
+
+  if (!company) return primaryEntries;
+
+  return [
+    ...primaryEntries,
+    {
+      id: company.id || "company",
+      titleZh: company.titleZh || "公司观察",
+      heroOpinionZh: company.heroOpinionZh || "",
+      sections: company.section ? [company.section] : []
+    }
+  ];
+}
+
+function renderKnowledgeTree(data) {
+  if (!knowledgePrimary || !knowledgeDetail) return;
+
+  const entries = normalizeKnowledgeEntries(data);
+  if (!entries.length) {
+    knowledgeDetail.innerHTML = `<div class="knowledge-empty">知识树暂时没有内容。</div>`;
+    return;
+  }
+
+  if (!entries.some((entry) => entry.id === activeKnowledgeId)) {
+    activeKnowledgeId = entries[0].id;
+  }
+
+  knowledgePrimary.innerHTML = entries.map((entry, index) => `
+    <button class="knowledge-entry-button ${entry.id === activeKnowledgeId ? "is-active" : ""}" type="button" data-knowledge-id="${escapeHTML(entry.id)}" aria-pressed="${entry.id === activeKnowledgeId}">
+      <span class="knowledge-entry-index">${String(index + 1).padStart(2, "0")}</span>
+      <strong>${escapeHTML(entry.titleZh)}</strong>
+      <span>${escapeHTML(entry.heroOpinionZh)}</span>
+    </button>
+  `).join("");
+
+  const activeEntry = entries.find((entry) => entry.id === activeKnowledgeId) || entries[0];
+  const sections = Array.isArray(activeEntry.sections) ? activeEntry.sections : [];
+
+  knowledgeDetail.innerHTML = `
+    <article class="knowledge-focus">
+      <div class="knowledge-focus-head">
+        <p class="eyebrow">当前入口</p>
+        <h3>${escapeHTML(activeEntry.titleZh)}</h3>
+        <p>${escapeHTML(activeEntry.heroOpinionZh)}</p>
+      </div>
+      <div class="knowledge-section-list">
+        ${sections.map(renderKnowledgeSection).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function renderKnowledgeSection(section) {
+  const cards = Array.isArray(section.cards) ? section.cards : [];
+
+  return `
+    <section class="knowledge-section-block">
+      <div class="knowledge-section-head">
+        <h4>${escapeHTML(section.titleZh)}</h4>
+        <p class="knowledge-question">${escapeHTML(section.visitorQuestionZh || "")}</p>
+        <p class="knowledge-answer">${escapeHTML(section.ourAnswerZh || "")}</p>
+        ${section.representativeContentZh ? `<p class="knowledge-source">${escapeHTML(section.representativeContentZh)}</p>` : ""}
+      </div>
+      <div class="knowledge-card-grid">
+        ${cards.map(renderKnowledgeCard).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderKnowledgeCard(card) {
+  return `
+    <article class="knowledge-card">
+      <h5>${escapeHTML(card.titleZh)}</h5>
+      <p class="knowledge-card-opinion">${escapeHTML(card.coreOpinionZh)}</p>
+      <p>${escapeHTML(card.summaryZh)}</p>
+      <details>
+        <summary>展开完整内容</summary>
+        <div class="knowledge-card-full">
+          ${paragraphList(card.fullContentZh)}
+        </div>
+      </details>
+    </article>
+  `;
+}
+
+async function initKnowledgeTree() {
+  if (!knowledgePrimary || !knowledgeDetail) return;
+
+  try {
+    const response = await fetch("data/knowledge/knowledge_tree_2_5_view_v1.json");
+    if (!response.ok) throw new Error(`Knowledge tree request failed: ${response.status}`);
+    const data = await response.json();
+    renderKnowledgeTree(data);
+  } catch (error) {
+    knowledgeDetail.innerHTML = `
+      <div class="knowledge-empty">
+        <strong>知识树暂时没有加载成功。</strong>
+        <span>请稍后刷新页面，或直接进入内容和播客区查看我们已发布的内容。</span>
+      </div>
+    `;
+  }
+}
+
+knowledgePrimary?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-knowledge-id]");
+  if (!button) return;
+
+  activeKnowledgeId = button.dataset.knowledgeId;
+  initKnowledgeTree();
+});
 
 function renderTwin(lang) {
   if (!twinAnswer || !twinPrompts) return;
@@ -341,3 +476,4 @@ noteForm?.addEventListener("submit", (event) => {
 });
 
 setLanguage(localStorage.getItem("yao-site-language") || "zh");
+initKnowledgeTree();
